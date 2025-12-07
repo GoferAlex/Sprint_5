@@ -12,8 +12,10 @@ import (
 )
 
 var (
-	errLenSlice = errors.New("the slice length is not equal to 3")
-	errTraining = errors.New("unknown type of training")
+	errLenSlice     = errors.New("the slice length is not equal to 3")
+	errTraining     = errors.New("unknown type of training")
+	errStepsZero    = errors.New("the number of steps is less than or equal to zero")
+	errDurationZero = errors.New("the duration of activity is less than or equal to zero")
 )
 
 type Training struct {
@@ -29,12 +31,18 @@ func (t *Training) Parse(datastring string) (err error) {
 		return errLenSlice
 	}
 	steps, err := strconv.Atoi(slice[0])
+	if steps <= 0 {
+		return errStepsZero
+	}
 	if err != nil {
 		return err
 	}
 	t.Steps = steps
 	t.TrainingType = slice[1]
 	duration, err := time.ParseDuration(slice[2])
+	if duration <= 0 {
+		return errDurationZero
+	}
 	if err != nil {
 		return err
 	}

@@ -11,7 +11,11 @@ import (
 	"github.com/Yandex-Practicum/tracker/internal/spentenergy"
 )
 
-var errLenSlice = errors.New("the slice length is not equal to 3")
+var (
+	errLenSlice     = errors.New("the slice length is not equal to 3")
+	errStepsZero    = errors.New("the number of steps is less than or equal to zero")
+	errDurationZero = errors.New("the duration of activity is less than or equal to zero")
+)
 
 type DaySteps struct {
 	Steps    int
@@ -25,11 +29,17 @@ func (ds *DaySteps) Parse(datastring string) (err error) {
 		return errLenSlice
 	}
 	steps, err := strconv.Atoi(slice[0])
+	if steps <= 0 {
+		return errStepsZero
+	}
 	if err != nil {
 		return err
 	}
 	ds.Steps = steps
 	duration, err := time.ParseDuration(slice[1])
+	if duration <= 0 {
+		return errDurationZero
+	}
 	if err != nil {
 		return err
 	}
